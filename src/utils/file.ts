@@ -1,12 +1,18 @@
-export function uploadFile(file : File) {
+export async function uploadFile(file : File, tryCount: number = 0) {
     const formData = new FormData();
     formData.append('file', file);
 
     // Send the file to the server using fetch
-    return fetch('http://82.115.20.216:1234/upload', {
-        method: 'POST',
-        body: formData,
-    });
+    try {
+        const res = await fetch('http://82.115.20.216:1234/upload', {
+            method: 'POST',
+            body: formData,
+        });
+        return res;
+    } catch (e) {
+        if(tryCount++ < 3)
+            return uploadFile(file, tryCount);
+    }
 }
 
 /*
